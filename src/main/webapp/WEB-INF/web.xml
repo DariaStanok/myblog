@@ -17,7 +17,7 @@
         </init-param>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>ru.practicum.project.config.WebConfiguration</param-value>
+            <param-value>ru.practicum.project.WebConfiguration</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
