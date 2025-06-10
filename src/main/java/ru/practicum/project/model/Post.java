@@ -20,4 +20,12 @@ public class Post {
     private int likesCount;
     private List<Comment> comments;
     private List<String> tags;
+    
+    public Post(Long id, String title, String text, String imagePath, int likesCount) {
+    	this.id = id;
+    	this.title = title;
+    	this.text = text;
+    	this.imagePath = imagePath;
+    	this.likesCount = likesCount;
+    }
 }

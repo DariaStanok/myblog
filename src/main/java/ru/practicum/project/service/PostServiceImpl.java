@@ -15,7 +15,7 @@ public class PostServiceImpl {
 		this.postRepository = postRepository;
 	};
 	
-	public List<Post> findAll(String search, int pageSize, int pageNumber) {
+	public List<Post> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

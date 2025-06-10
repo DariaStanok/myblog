@@ -8,7 +8,7 @@ import ru.practicum.project.model.Post;
 
 @Repository
 public interface PostRepository {
-	List<Post> findAll(int pageSize, int pageNumber, String tagFilter);
+	List<Post> findAll();
     
 	Post findById(Long id);
     

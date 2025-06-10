@@ -10,7 +10,7 @@ import ru.practicum.project.model.Post;
 @Service
 public interface PostService {
 
-	List<Post> findAll (String search, int pageSize, int pageNumber);
+	List<Post> findAll ();
 	
 	Post save (Post post, MultipartFile image);
 	
