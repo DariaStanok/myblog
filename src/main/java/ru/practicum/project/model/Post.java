@@ -27,5 +27,11 @@ public class Post {
     	this.text = text;
     	this.imagePath = imagePath;
     	this.likesCount = likesCount;
+    	this.comments = List.of();
+    	this.tags = List.of();
+    }
+    
+    public String getTagsAsText() {
+        return String.join(", ", tags);
     }
 }

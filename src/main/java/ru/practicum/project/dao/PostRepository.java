@@ -8,7 +8,10 @@ import ru.practicum.project.model.Post;
 
 @Repository
 public interface PostRepository {
+	
 	List<Post> findAll();
+	
+	List<Post> findByTag(String tag);
     
 	Post findById(Long id);
     

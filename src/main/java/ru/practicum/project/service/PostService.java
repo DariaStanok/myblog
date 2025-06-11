@@ -10,13 +10,15 @@ import ru.practicum.project.model.Post;
 @Service
 public interface PostService {
 
-	List<Post> findAll ();
+	List<Post> findAll(String search, int pageSize, int pageNumber);
 	
-	Post save (Post post, MultipartFile image);
+	Post findById(Long id);
 	
-	Post update (Long id, Post updatePost, MultipartFile image);
+	Post save (Post post, MultipartFile image, String tags);
 	
-	void deleteById (Long Id);
+	Post update (Long id, Post updatePost, MultipartFile image, String tags);
+	
+	void deleteById (Long id);
 	
 	void like (Long id, boolean like);
 	

@@ -1,6 +1,6 @@
 package ru.practicum.project.controller;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -29,15 +29,11 @@ public class PostController {
         this.commentService = commentService; 
     }
     
-    
-    /**
-     * Главная страница ленты постов.
-     */
     @GetMapping
     public String showPostsPage(
-            @RequestParam(defaultValue = "") String search,
-            @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "1") int pageNumber,
+    	     @RequestParam(name = "search",   defaultValue = "") String search,
+    	     @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+    	     @RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
             Model model) {
         model.addAttribute("posts", service.findAll(search, pageSize, pageNumber));
         model.addAttribute("search", search);
@@ -48,106 +44,81 @@ public class PostController {
         return "posts";
     }
 
-    /**
-     * Просмотр одного поста с комментариями.
-     */
     @GetMapping("/{id}")
-    public String showPostPage(@PathVariable Long id, Model model) {
+    public String showPostPage(@PathVariable(name = "id")  Long id, Model model) {
         model.addAttribute("post", service.findById(id));
         return "post";
     }
 
-    /**
-     * Форма добавления нового поста.
-     */
     @GetMapping("/add")
     public String showAddForm(Model model) {
-        model.addAttribute("post", new Post());
-        return "post-add";
+    	Post post = new Post();
+        post.setTags(List.of());      
+        post.setComments(List.of());  
+        model.addAttribute("post", post);
+        return "add-post";
     }
 
-    /**
-     * Создание нового поста.
-     */
     @PostMapping
     public String addPost(
             @ModelAttribute Post post,
-            @RequestParam MultipartFile image) throws IOException {
-        Post saved = service.save(post, image);
+            @RequestParam(name = "image") MultipartFile image,
+    	    @RequestParam(name = "tags") String tags){
+        Post saved = service.save(post, image,tags);
         return "redirect:/posts/" + saved.getId();
     }
 
-    /**
-     * Форма редактирования поста.
-     */
     @GetMapping("/{id}/edit")
     public String editPostPage(@PathVariable Long id, Model model) {
         model.addAttribute("post", service.findById(id));
-        return "post-add";
+        return "add-post";
     }
 
-    /**
-     * Сохранение изменений поста.
-     */
     @PostMapping("/{id}")
     public String editPost(
-            @PathVariable Long id,
+            @PathVariable(name = "id") Long id,
             @ModelAttribute Post post,
-            @RequestParam(required = false) MultipartFile image) throws IOException {
-        service.update(id, post, image);
+            @RequestParam(name = "image",required = false) MultipartFile image,
+            @RequestParam(name = "tags") String tags)  {
+        service.update(id, post, image,tags);
         return "redirect:/posts/" + id;
     }
 
-    /**
-     * Удаление поста.
-     */
     @PostMapping("/{id}/delete")
-    public String deletePost(@PathVariable Long id) throws IOException {
-        service.delete(id);
+    public String deletePost(@PathVariable(name = "id")  Long id)  {
+        service.deleteById(id);
         return "redirect:/posts";
     }
 
-    /**
-     * Лайк/дизлайк поста.
-     */
     @PostMapping("/{id}/like")
     public String like(
-            @PathVariable Long id,
-            @RequestParam boolean like) {
+            @PathVariable(name = "id") Long id,
+            @RequestParam(name = "like")boolean like) {
         service.like(id, like);
         return "redirect:/posts/" + id;
     }
 
-    /**
-     * Добавление комментария к посту.
-     */
     @PostMapping("/{id}/comments")
     public String addComment(
-            @PathVariable Long id,
-            @RequestParam String text) {
+            @PathVariable(name = "id")Long id,
+            @RequestParam(name = "text") String text) {
         commentService.addComment(id, text);
         return "redirect:/posts/" + id;
     }
 
-    /**
-     * Редактирование комментария.
-     */
     @PostMapping("/{id}/comments/{commentId}")
     public String editComment(
-            @PathVariable Long id,
-            @PathVariable Long commentId,
-            @RequestParam String text) {
+            @PathVariable(name = "id") Long id,
+            @PathVariable(name = "commentId")Long commentId,
+            @RequestParam (name = "text") String text) {
         commentService.editComment(id, commentId, text);
         return "redirect:/posts/" + id;
     }
 
-    /**
-     * Удаление комментария.
-     */
     @PostMapping("/{id}/comments/{commentId}/delete")
     public String deleteComment(
-            @PathVariable Long id,
-            @PathVariable Long commentId) {
+            @PathVariable(name = "id") Long id,
+            @PathVariable(name = "commentId") Long commentId) {
         commentService.deleteComment(id, commentId);
         return "redirect:/posts/" + id;
     }

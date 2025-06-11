@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.stereotype.Repository;
 
 import ru.practicum.project.model.Post;
 
+@Repository
 public class JdbcNativePostRepository implements PostRepository  {
 
 	private final JdbcTemplate jdbcTemplate;
@@ -29,6 +31,26 @@ public class JdbcNativePostRepository implements PostRepository  {
 				rs.getInt("likes_count")
 				));
 	} 
+	
+	@Override
+	public List<Post> findByTag(String tag) {
+		return jdbcTemplate.query(
+				"""
+				select p.id, p.title, p.text, p.image_path, p.likes_count 
+				from posts p
+				join tags t on p.id = t.post_id
+				where t.text like ?
+				""",
+				(rs, rowNum) -> new Post(
+					rs.getLong("id"),
+					rs.getString("title"),
+					rs.getString("text"),
+					rs.getString("image_path"),
+					rs.getInt("likes_count")
+				),
+				"%" + tag + "%"
+			);
+	}
 	
 	@Override
 	public Post findById(Long id) {
@@ -82,5 +104,4 @@ public class JdbcNativePostRepository implements PostRepository  {
 		jdbcTemplate.update("delete from posts where id = ?", id);
 
 	}
-
 }

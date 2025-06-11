@@ -1,28 +1,33 @@
 package ru.practicum.project.service;
 
+import org.springframework.stereotype.Service;
+
 import ru.practicum.project.dao.CommentRepository;
 
-public class CommentServiceImpl {
+@Service
+public class CommentServiceImpl  implements CommentService{
 
 	private final CommentRepository commentRepository;
-
+	
 	public CommentServiceImpl(CommentRepository commentRepository) {
 		this.commentRepository = commentRepository;
 	}
 
+	@Override
 	public void addComment(Long postId, String text) {
-		// TODO Auto-generated method stub
-
+		commentRepository.save(postId, text);
+		
 	}
 
+	@Override
 	public void editComment(Long postId, Long commentId, String text) {
-		// TODO Auto-generated method stub
-
+		commentRepository.update(commentId, text);
+		
 	}
 
+	@Override
 	public void deleteComment(Long postId, Long commentId) {
-		// TODO Auto-generated method stub
-
+		commentRepository.delete(commentId);
+		
 	}
-
 }
