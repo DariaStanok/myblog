@@ -39,4 +39,9 @@ public class Post {
     public List<String> getTextParts() {
         return text == null ? List.of() : Arrays.asList(text.split("\\n"));
     }
+    
+    public String getTextPreview() {
+        if (text == null) return "";
+        return text.length() > 150 ? text.substring(0, 150) + "..." : text;
+    }
 }

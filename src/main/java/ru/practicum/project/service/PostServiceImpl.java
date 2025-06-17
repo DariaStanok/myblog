@@ -41,8 +41,6 @@ public class PostServiceImpl implements PostService {
 	    }
 	    return paginate(allPosts, paging);
 	}
-	
-	
 
 	@Override
 	public Post findById(Long id) {
@@ -60,7 +58,9 @@ public class PostServiceImpl implements PostService {
 			post.setImagePath(filename);
 		}
 		Long id = postRepository.save(post);
-		tagRepository.insertTags(id, parseTags(tags));
+		List<String> tagList = parseTags(tags);
+	    tagRepository.insertTags(id, tagList);
+	    post.setTags(tagList);
 		return findById(id);
 	}
 
@@ -72,8 +72,10 @@ public class PostServiceImpl implements PostService {
 		}
 		updatePost.setId(id);
 		postRepository.update(updatePost);
-		tagRepository.deleteTags(id);
-		tagRepository.insertTags(id, parseTags(tags));
+		List<String> tagList = parseTags(tags);
+	    tagRepository.deleteTags(id);
+	    tagRepository.insertTags(id, tagList);
+	    updatePost.setTags(tagList);
 		return findById(id);
 	}
 
@@ -92,13 +94,19 @@ public class PostServiceImpl implements PostService {
 	private String storeImage(MultipartFile image) {
 		if (image == null || image.isEmpty())
 			return null;
-		String originalFilename = image.getOriginalFilename();
-		String filename = UUID.randomUUID() + "_" + (originalFilename != null ? originalFilename : "");
-		Path target = Paths.get(uploadDir).resolve(filename);
 		try {
+			String originalFilename = image.getOriginalFilename();
+			String extension = "";
+
+			if (originalFilename != null && originalFilename.contains(".")) {
+				extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+			}
+			String filename = UUID.randomUUID() + extension;
+			Path target = Paths.get(uploadDir).resolve(filename);
 			Files.createDirectories(target.getParent());
 			image.transferTo(target.toFile());
 			return filename;
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
