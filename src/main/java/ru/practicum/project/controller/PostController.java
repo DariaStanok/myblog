@@ -1,7 +1,6 @@
 package ru.practicum.project.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import ru.practicum.project.model.Paging;
 import ru.practicum.project.model.Post;
 import ru.practicum.project.service.CommentService;
 import ru.practicum.project.service.PostService;
@@ -34,13 +34,17 @@ public class PostController {
     	     @RequestParam(name = "search",   defaultValue = "") String search,
     	     @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
     	     @RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber,
-            Model model) {
-        model.addAttribute("posts", service.findAll(search, pageSize, pageNumber));
-        model.addAttribute("search", search);
-        model.addAttribute("paging", Map.of(
-                "pageSize", pageSize,
-                "pageNumber", pageNumber
-        ));
+    	     @RequestParam(name = "action", required = false) String action,
+            Model model){ 
+    	Paging paging = new Paging(pageSize, pageNumber, false); 
+    	List<Post> paginatedPosts = service.findAll(search, paging);
+    	model.addAttribute("posts", paginatedPosts);
+    	model.addAttribute("search", search);
+    	model.addAttribute("pageSize", paging.getPageSize());
+    	model.addAttribute("pageNumber", paging.getPageNumber());
+    	model.addAttribute("hasPrevious", paging.hasPrevious());
+    	model.addAttribute("hasNext", paging.isHasNext()); 
+
         return "posts";
     }
 
@@ -69,7 +73,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}/edit")
-    public String editPostPage(@PathVariable Long id, Model model) {
+    public String editPostPage(@PathVariable(name = "id") Long id, Model model) {
         model.addAttribute("post", service.findById(id));
         return "add-post";
     }

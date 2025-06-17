@@ -1,5 +1,6 @@
 package ru.practicum.project.model;
 
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -33,5 +34,9 @@ public class Post {
     
     public String getTagsAsText() {
         return String.join(", ", tags);
+    }
+    
+    public List<String> getTextParts() {
+        return text == null ? List.of() : Arrays.asList(text.split("\\n"));
     }
 }

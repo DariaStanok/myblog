@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.practicum.project.dao.CommentRepository;
 import ru.practicum.project.dao.PostRepository;
 import ru.practicum.project.dao.TagRepository;
+import ru.practicum.project.model.Paging;
 import ru.practicum.project.model.Post;
 
 @Service
@@ -33,19 +34,15 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<Post> findAll(String search, int pageSize, int pageNumber) {
-		List<Post> posts = (search != null && !search.isBlank()) ? postRepository.findByTag(search.toLowerCase())
-				: postRepository.findAll();
-		for (Post post : posts) {
-			post.setTags(tagRepository.loadTags(post.getId()));
-		}
-		int fromIndex = (pageNumber - 1) * pageSize;
-		int toIndex = Math.min(fromIndex + pageSize, posts.size());
-		if (fromIndex >= posts.size()) {
-			return List.of(); 
-		}
-		return posts.subList(fromIndex, toIndex);
+	public List<Post> findAll(String search, Paging paging) {
+	    List<Post> allPosts = (search != null && !search.isBlank()) ? postRepository.findByTag(search.toLowerCase()) : postRepository.findAll();
+	    for (Post post : allPosts) {
+	        post.setTags(tagRepository.loadTags(post.getId()));
+	    }
+	    return paginate(allPosts, paging);
 	}
+	
+	
 
 	@Override
 	public Post findById(Long id) {
@@ -118,6 +115,22 @@ public class PostServiceImpl implements PostService {
 				.map(String::toLowerCase)
 				.filter(s -> !s.isEmpty())
 				.toList();
+	}
+	
+	private List<Post> paginate(List<Post> allPosts, Paging paging) {
+		int pageSize = paging.getPageSize();
+		int pageNumber = paging.getPageNumber();
+		int fromIndex = (pageNumber - 1) * pageSize;
+		int toIndex = Math.min(fromIndex + pageSize + 1, allPosts.size());
+
+		if (fromIndex >= allPosts.size()) {
+			paging.setHasNext(false);
+			return List.of();
+		}
+
+		List<Post> slice = allPosts.subList(fromIndex, toIndex);
+		paging.setHasNext(slice.size() > pageSize);
+		return slice.size() > pageSize ? slice.subList(0, pageSize) : slice;
 	}
 
 }

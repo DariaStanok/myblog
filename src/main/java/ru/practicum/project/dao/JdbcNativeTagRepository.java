@@ -13,6 +13,7 @@ public class JdbcNativeTagRepository implements TagRepository {
 	public JdbcNativeTagRepository (JdbcTemplate jdbcTemplate){
 		this.jdbcTemplate = jdbcTemplate;
 	}
+	
 	@Override
 	public List<String> loadTags(Long postId) {
         return jdbcTemplate.queryForList("select text from tags where post_id = ?", String.class, postId);
@@ -27,7 +28,7 @@ public class JdbcNativeTagRepository implements TagRepository {
 	@Override
 	public void insertTags(Long postId, List<String> tags) {
 		 tags.forEach(tag ->
-	        jdbcTemplate.update("INSERT INTO tags (post_id, text) VALUES (?, ?)", postId, tag)
+	        jdbcTemplate.update("insert into tags (post_id, text) values (?, ?)", postId, tag)
 	    );
 	}
 }
