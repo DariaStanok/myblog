@@ -45,3 +45,5 @@ public class Post {
         return text.length() > 150 ? text.substring(0, 150) + "..." : text;
     }
 }
+
+
