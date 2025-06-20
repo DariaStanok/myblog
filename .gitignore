@@ -1,22 +1,41 @@
 # Maven 
+
 /target/
-!.mvn/wrapper/maven-wrapper.jar
+*.war
+*.jar
+*.ear
 
 # Eclipse 
+
 .classpath
 .project
 .settings/
+*.launch
 
-# IntelliJ IDEA 
+# IntelliJ IDEA
+ 
 .idea/
 *.iml
 
-# OS
+# Windows OS
+
 Thumbs.db
+ehthumbs.db
 
 # Logs
+
 *.log
 *.tmp
 *.swp
+
+# Java
+
+*.class
+
+# Spring/Dev
+
+.factorypath
+
+
 
 
